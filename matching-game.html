@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Matching Game</title>
+        <!---
+        <link rel="stylesheet" href="css/matching-game.css" />
+        --->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />
+
+        <style>
+            h1 {
+                text-align: center;
+                font-family: 'Roboto';
+            }
+
+            #level {
+                margin-bottom: -20px;
+                font-weight: bolder;
+                font-size: 150%;
+            }
+
+            p {
+                text-align: center;
+                font-family: 'Nothing You Could Do';
+            }
+
+            
+            label {
+                font-family: 'Nothing You Could Do';
+                margin: auto;
+            }
+
+            button {
+                font-family: 'Roboto';
+                color: white;
+                text-align: center;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 20px;
+                padding: .5em;
+                border: 2px solid rgb(250, 49, 49);
+                border-radius: 2em;
+                background-color: red;
+                background-image: linear-gradient(white, red, red);
+                box-shadow: 30px 30px 20px darkgray;
+                filter: contrast(.75);
+                cursor: pointer;
+            }
+
+            .button:hover {
+                filter: none;
+            }
+
+            img {
+                position: absolute;
+            }
+
+            div {
+                position: absolute;
+                width: 50%;
+                height: 50%;
+            }
+
+            #rightside {
+                position: absolute;
+                left: 50%;
+                border-left: 1px solid;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Matching Game</h1>
+        
+        <p id="level">This is level </p>
+        <p>Click on the extra smiling face on the left side. If you get it right, you advance to the next level.</p>
+
+        <button class="button" id="newgame" type="button" onclick="newGame()">Play Again</button>
+        
+        <div id="leftside"></div>
+        <div id="rightside"></div>
+<!--
+        <script src="js/matching-game.js"></script>
+-->
+        <script>
+            window.addEventListener('load', generateFaces);
+            
+            let numberOfFaces = 5;
+            let level = 0;
+            let toggleButton = document.getElementById('newgame');
+            const theLeftSide = document.getElementById('leftside');
+            const theRightSide = document.getElementById('rightside');
+
+            toggleButton.style.display = "none";
+
+            function generateFaces() {
+                for(let i=0; i<numberOfFaces; i++) {
+                    let face = document.createElement('img');
+                    face.src = 'images/SlightSmileEmoji.png';
+                    face.width = "70"
+
+                    let randomTop = Math.ceil(Math.random()*.8*theLeftSide.clientHeight);
+                    face.style.top = randomTop + 'px';
+                    let randomLeft = Math.ceil(Math.random()*.8*theLeftSide.clientWidth);
+                    face.style.left = randomLeft + 'px';
+
+                    theLeftSide.appendChild(face);
+                }
+                const leftSideImages = theLeftSide.cloneNode(true);
+
+                leftSideImages.removeChild(leftSideImages.lastChild);
+                theRightSide.appendChild(leftSideImages);
+
+                level ++;
+                document.getElementById('level').innerHTML='This is Level ' + level;
+
+                theLeftSide.lastChild.addEventListener('click', nextLevel);
+                theLeftSide.addEventListener('click', gameOver);
+            }
+
+            function nextLevel() {
+                event.stopPropagation();
+                numberOfFaces += 5;
+
+                while(theLeftSide.firstChild) {
+                    theLeftSide.removeChild(theLeftSide.firstChild);
+                }
+                while(theRightSide.firstChild) {
+                    theRightSide.removeChild(theRightSide.firstChild);
+                }
+                generateFaces();
+            }
+
+            function gameOver() {
+                theLeftSide.lastChild.removeEventListener('click', nextLevel);
+                theLeftSide.removeEventListener('click', gameOver);
+                
+                alert('GAME OVER!\n\nLevel reached: ' + level);
+
+                toggleButton.style.display = "block";
+            }
+
+            function newGame() {
+                location.reload();
+                return;
+            }
+        </script>
+    </body>
+</html>
